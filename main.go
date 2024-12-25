@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 // album represents data about a record album.
@@ -70,6 +73,18 @@ func createTransaction() Transaction {
 }
 
 func main() {
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	// Get server address from environment variable
+	addr := os.Getenv("SERVER_ADDR")
+	if addr == "" {
+		addr = "0.0.0.0:8080" // Default if not set
+	}
+
 	// Create a new Gin router
 	router := gin.Default()
 
@@ -83,7 +98,7 @@ func main() {
 
 	// GET endpoint at /albums
 	router.GET("/albums", getAlbums)
-	router.Run("localhost:8080")
+	router.Run(addr)
 }
 
 // albums slice to seed record album data.
